@@ -165,16 +165,95 @@
 // 하지만 Object.assign()을 이용하면 간단하게 해결 가능
 //------------------------------------------------------------------- //
 
-let sports = {
-    event:'축구',
-    player : 11
-}
+// let sports = {
+//     event:'축구',
+//     player : 11
+// }
 
-let dup = Object.assign({},sports);
-console.log(dup.player); // 11
+// let dup = Object.assign({},sports);
+// console.log(dup.player); // 11
 
-dup.player = 33;
-console.log(sports.player); // 11
+// dup.player = 33;
+// console.log(sports.player); // 11
 
-sports.event = '수영';
-console.log(dup.event); // 축구
+// sports.event = '수영';
+// console.log(dup.event); // 축구
+
+//8.9 assign() 고려사항------------------------------------------------------------------- //
+
+// let oneObj = {one:1}, twoObj = {two:2};
+// let mergeObj = Object.assign(oneObj,twoObj);
+
+// console.log(Object.is(oneObj,mergeObj));//oneObj와 twoObj를 합쳐서 mergeObj에 할당함으로 true
+
+// mergeObj.one = 456;
+// console.log(Object.is(oneObj,mergeObj))// true
+// //oneObj와 twoObj는 연동되지않지만 oneobj의 값을 할당한 mergeObj의 값은 연동됨
+
+//------------------------------------------------------------------- //
+
+// let obj = {one:1};
+// Object.assign(obj,{two:2},{two:3},{four:4});
+// for(var pty in obj){
+//     console.log(pty,obj[pty]);// one 1 two 3 four 4
+// }
+//왼쪽에서 오른쪽으로 순서대로 프로퍼티를 복사하기때문에 two:3 값으로 나옴
+
+//8.10 assign() getter------------------------------------------------------------------- //
+// let count ={
+//     current :1,
+//     get getCount(){
+//         return ++this.current;
+//     }
+// }
+
+// let mergeObj = {};
+// Object.assign(mergeObj, count);
+// console.log(mergeObj); //프로퍼티가 getter일 경우 함수를 복사하지않고 호출하여 반환된 값을 복사, return하지않을경우 undefined
+// {current:1,getCount:2}
+
+//8.11 setPrototypeOf():__proto__첨부------------------------------------------------------------------- //
+
+// let Sports = function(){};
+// Sports.prototype.getCount = function(){
+//     return 123;
+// }
+// let protoObj = Object.setPrototypeOf({},Sports.prototype);
+// console.log(protoObj.getCount()); //123
+
+// setPrototypeOf():__proto__첨부 2------------------------------------------------------------------- //
+// let Sports = function(){};
+// Sports.prototype.getCount = function(){
+//     return 123;
+// }
+// let fnObj = Object.setPrototypeOf({},Sports); 
+// //위와 다르게 두번째 파라미터에 Sports를 지정하면, Sports의 prototype에 연결된 메서드를 직접 호출할수없다.
+// console.log(fnObj.getCount);//undefined
+// console.log(fnObj.prototype.getCount.call(Sports)); // 123
+//전체 경로를 지정하여 호출. 
+
+// __proto__와 prototype의 차이------------------------------------------------------------------- //
+/** __proto__에 있는 메서드는 object.method() 의 형태로 출력하고
+ * prototype에 연결된 메서드는 object.prototype.methodname.call()의 형태로 호출
+ */
+// let Sports = function(){
+//     this.member =11;
+// }
+// Sports.prototype.getMember = function(){};
+// let sportsObj = new Sports();
+// console.log(sportsObj.__proto__ === Sports.prototype); //true
+//Sports.prototype에 연결된 프로퍼티를 공유하므로 true
+
+//------------------------------------------------------------------- //
+
+let Sports = function(){};
+Sports.prototype.get = function(){};
+let sportsObj = new Sports();
+
+sportsObj.__proto__["set"]=function(){} // sportsObj의 __proto__에 set메서드를 추가하면 Sports.prototype에 추가됨.
+sportsObj.set(); //__proto__는 프로퍼티 검색과 경로를 재공하기 위한 것으로 실제 메서드는 Sports.prototype에 연결된 메서드 이용
+
+let result = Sports.prototype.set; //Sports.prototype 에서도 set에 접근이 가능함. sportsObj에서 추가했지만 실제론 Sports.prototype에 들어가기때문.
+console.log(result); // function(){}
+
+
