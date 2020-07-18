@@ -66,8 +66,8 @@ for(let sym of symbolList){
         keyValue[key] = bookObj[sym];  // two =20;
     }else{
         //Symbol(one)
-        first = /^Symbol[(]/[Symbol.replace](sym.toString(),""); // Symbol의 "one" 이외의 문자를 빈문자열로 대체
-        second = /[)]$/[Symbol.replace](first,""); // "one" 문자열이 second에 할당됨
+        first = /^Symbol[(]/[Symbol.replace](sym.toString(),"");
+        second = /[)]$/[Symbol.replace](first,"");
         keyValue[second] = bookObj[sym];
     }
 }
